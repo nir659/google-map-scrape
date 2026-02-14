@@ -9,8 +9,9 @@ from pydantic import BaseModel, Field
 
 
 class Business(BaseModel):
-    """All data extractable from a Google Maps sidebar card."""
+    """All data extractable from a Google Maps sidebar card + enrichment."""
 
+    # -- Stage 1: Maps scraper fields --------------------------------------
     name: str = Field(..., description="Business name")
     link: str = Field(..., description="Google Maps place URL")
     phone: Optional[str] = Field(None, description="Phone number")
@@ -23,4 +24,17 @@ class Business(BaseModel):
     scraped_at: datetime = Field(
         default_factory=datetime.utcnow,
         description="UTC timestamp of when the record was scraped",
+    )
+
+    # -- Stage 2: Email enrichment fields ----------------------------------
+    email: Optional[str] = Field(None, description="Extracted email address")
+    enrichment_status: Optional[str] = Field(
+        None,
+        description="tier1_success | tier2_success | tier3_success | no_website | failed",
+    )
+    enrichment_method: Optional[str] = Field(
+        None, description="Which tier found the email"
+    )
+    enriched_at: Optional[datetime] = Field(
+        None, description="Timestamp of enrichment"
     )

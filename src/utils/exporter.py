@@ -51,15 +51,27 @@ def export_all(
     query_name: str,
 ) -> dict:
     """
-    Convenience wrapper -- exports both CSV and JSON for a single query.
+    Export leads + enriched versions (CSV and JSON).
 
-    Returns a dict with the output file paths.
+    Returns a dict with all output file paths.
     """
     safe_name = query_name.replace(" ", "_").lower()
+
     csv_path = output_dir / f"{safe_name}_leads.csv"
     json_path = output_dir / f"{safe_name}_leads.json"
+    enriched_csv = output_dir / f"{safe_name}_enriched.csv"
+    enriched_json = output_dir / f"{safe_name}_enriched.json"
 
     export_to_csv(data, csv_path)
     export_to_json(data, json_path)
 
-    return {"csv": csv_path, "json": json_path}
+    # Also save as enriched filenames for clarity
+    export_to_csv(data, enriched_csv)
+    export_to_json(data, enriched_json)
+
+    return {
+        "csv": csv_path,
+        "json": json_path,
+        "enriched_csv": enriched_csv,
+        "enriched_json": enriched_json,
+    }

@@ -68,3 +68,18 @@ ACCEPT_COOKIES: str = 'button[aria-label="Accept all"]'
 # ── Card detail selectors (children of the card container) ────────────────
 WEBSITE_LINK: str = 'a[data-value="Website"]'
 RATING_SPAN: str = 'span[role="img"]'       # aria-label contains "X.X stars"
+
+# ── Email Enricher ────────────────────────────────────────────────────────
+
+ENRICHER_ENABLED: bool = True               # Toggle enrichment on/off
+ENRICHER_MAX_WORKERS: int = 15              # Concurrent threads
+ENRICHER_REQUEST_TIMEOUT: int = 10          # Seconds per HTTP request
+ENRICHER_SAME_DOMAIN_DELAY: float = 2.0     # Rate limit same domain (seconds)
+ENRICHER_ENABLE_TIER3: bool = True          # Playwright JS rendering tier
+ENRICHER_MAX_RETRIES: int = 3               # HTTP retry attempts per URL
+
+# JS framework keywords that trigger Tier 3 rendering
+JS_FRAMEWORK_KEYWORDS: list = [
+    "react", "vue", "angular", "__next_data__", "nuxt", "_nuxt",
+    "svelte", "gatsby", "remix",
+]

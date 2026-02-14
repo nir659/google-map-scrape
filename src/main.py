@@ -23,6 +23,7 @@ from src.core.browser import (
 from src.core.scroller import perform_infinite_scroll
 from src.core.parser import extract_listings
 from src.core.error_handler import ErrorHandler
+from src.enricher.orchestrator import enrich_businesses
 from src.utils.exporter import export_all
 
 
@@ -73,6 +74,24 @@ def run_query(
 
         # -- Parse ---------------------------------------------------------
         listings = extract_listings(page, query)
+
+        # -- Close browser before enrichment (frees memory) ----------------
+        close_browser(pw, browser)
+        pw = browser = None
+
+        # -- Enrich --------------------------------------------------------
+        if cfg.ENRICHER_ENABLED and listings:
+            logger.info(
+                "Starting email enrichment for {} businesses ...",
+                len(listings),
+            )
+            listings = enrich_businesses(listings)
+            emails_found = sum(1 for b in listings if b.email)
+            logger.info(
+                "Enrichment complete: {}/{} emails found",
+                emails_found,
+                len(listings),
+            )
 
         # -- Checkpoint ----------------------------------------------------
         records = [item.model_dump(mode="json") for item in listings]
@@ -147,6 +166,12 @@ def main() -> None:
         default=None,
         help=f"Output directory for CSV/JSON (default: {cfg.OUTPUT_DIR})",
     )
+    parser.add_argument(
+        "--no-enrich",
+        action="store_true",
+        default=False,
+        help="Skip email enrichment (scrape only)",
+    )
     args = parser.parse_args()
 
     # -- Apply CLI overrides -----------------------------------------------
@@ -155,6 +180,8 @@ def main() -> None:
     if args.output_dir:
         from pathlib import Path
         cfg.OUTPUT_DIR = Path(args.output_dir)
+    if args.no_enrich:
+        cfg.ENRICHER_ENABLED = False
 
     # -- Run ---------------------------------------------------------------
     error_handler = ErrorHandler()
