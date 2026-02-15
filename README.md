@@ -1,6 +1,6 @@
 # Google Maps Scraper
 
-A production-ready Google Maps scraper built with **Playwright** and **Stealth** injection. Extracts business listings (name + link) from Google Maps search results with robust error handling, checkpointing, and retry logic.
+A Google Maps scraper built with **Playwright** and **Stealth** injection. Extracts business listings (name + link) from Google Maps search results with robust error handling, checkpointing, and retry logic.
 
 ## Features
 
